@@ -45,6 +45,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) { // Every widget defines a build() ethod called every time a widget's circumstances change
     var appState = context.watch<MyAppState>(); // Tracks changes to the app's current state using watch method
+    var pair = appState.current;
 
     return Scaffold( // Every build method must return a widget or a nested tree of widgets. Top-level widget is Scaffold
     // Column is the most basic layout widgets in Flutter
@@ -52,7 +53,7 @@ class MyHomePage extends StatelessWidget {
       body: Column(
         children: [
           Text('An amazing idea:'),
-          Text(appState.current.asLowerCase),
+          WordCard(pair: pair),
 
           ElevatedButton(
             onPressed: () {
@@ -60,6 +61,34 @@ class MyHomePage extends StatelessWidget {
               appState.getNext();
             }, child: Text('Next'))
         ],
+      ),
+    );
+  }
+}
+
+class WordCard extends StatelessWidget {
+  const WordCard({
+    super.key,
+    required this.pair,
+  });
+
+  final WordPair pair;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context); // App requesting the app's current theme
+
+    // theme.textTheme, we are accessing the app's font theme
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary
+    );
+
+    return Card (
+      elevation: 15.0,
+      color: theme.colorScheme.primary, // Defines the colour set in colorScheme
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Text(pair.asLowerCase, style: style,),
       ),
     );
   }
