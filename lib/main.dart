@@ -35,6 +35,7 @@ class MyAppState extends ChangeNotifier {
 
   void getNext() { // Reassigns current with a new random WordPair
     current = WordPair.random();
+    print(current);
 
     // Call notifyListeners() to ensure anyone watching this widget is notified
     notifyListeners();
@@ -50,17 +51,20 @@ class MyHomePage extends StatelessWidget {
     return Scaffold( // Every build method must return a widget or a nested tree of widgets. Top-level widget is Scaffold
     // Column is the most basic layout widgets in Flutter
     // Can take any number of children and put them in a column from top to bottom
-      body: Column(
-        children: [
-          Text('An amazing idea:'),
-          WordCard(pair: pair),
-
-          ElevatedButton(
-            onPressed: () {
-              // print('button pressed');
-              appState.getNext();
-            }, child: Text('Next'))
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Text('An amazing idea:'),
+            WordCard(pair: pair),
+            SizedBox(height: 10,),
+            ElevatedButton(
+              onPressed: () {
+                // print('button pressed');
+                appState.getNext();
+              }, child: Text('Next'))
+          ],
+        ),
       ),
     );
   }
@@ -84,11 +88,16 @@ class WordCard extends StatelessWidget {
     );
 
     return Card (
-      elevation: 15.0,
+      elevation: 10.0,
       color: theme.colorScheme.primary, // Defines the colour set in colorScheme
       child: Padding(
         padding: const EdgeInsets.all(15),
-        child: Text(pair.asLowerCase, style: style,),
+        child: Text(
+          pair.asLowerCase,
+          style: style,
+          semanticsLabel: "${pair.first} ${pair.second}",
+          // this is for accessability
+        ),
       ),
     );
   }
