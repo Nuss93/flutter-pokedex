@@ -35,36 +35,102 @@ class MyAppState extends ChangeNotifier {
 
   void getNext() { // Reassigns current with a new random WordPair
     current = WordPair.random();
-    print(current);
+    // print(current);
+    print('Current favourites $favourites');
 
     // Call notifyListeners() to ensure anyone watching this widget is notified
+    notifyListeners();
+  }
+
+  var favourites = <WordPair>[];
+
+  void toggleFavourites() {
+    if(favourites.contains(current)) {
+      favourites.remove(current);
+    } else {
+      favourites.add(current);
+    }
     notifyListeners();
   }
 }
 
 class MyHomePage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) { // Every widget defines a build() ethod called every time a widget's circumstances change
-    var appState = context.watch<MyAppState>(); // Tracks changes to the app's current state using watch method
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          SafeArea(
+            child: NavigationRail(
+              extended: false,
+              destinations: [
+                NavigationRailDestination(
+                  icon: Icon(Icons.home),
+                  label: Text('Home'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.favorite),
+                  label: Text('Favorites'),
+                ),
+              ],
+              selectedIndex: 0,
+              onDestinationSelected: (value) {
+                print('selected: $value');
+              },
+            ),
+          ),
+          Expanded(
+            child: Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: GeneratorPage(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class GeneratorPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     var pair = appState.current;
 
-    return Scaffold( // Every build method must return a widget or a nested tree of widgets. Top-level widget is Scaffold
-    // Column is the most basic layout widgets in Flutter
-    // Can take any number of children and put them in a column from top to bottom
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Text('An amazing idea:'),
-            WordCard(pair: pair),
-            SizedBox(height: 10,),
-            ElevatedButton(
-              onPressed: () {
-                // print('button pressed');
-                appState.getNext();
-              }, child: Text('Next'))
-          ],
-        ),
+    IconData icon;
+    if (appState.favourites.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
+    }
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          WordCard(pair: pair),
+          SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () {
+                  print('Click like and subscribe!');
+                  appState.toggleFavourites();
+                },
+                icon: Icon(icon),
+                label: Text('Like'),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () {
+                  appState.getNext();
+                },
+                child: Text('Next'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
