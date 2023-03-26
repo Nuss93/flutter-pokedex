@@ -15,10 +15,10 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'Namer App',
+        title: 'Pokedex App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
         ),
         home: MyHomePage(),
       ),
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = GeneratorPage();
         break;
       case 1:
-        page = Placeholder();
+        page = FavouritesPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -162,6 +162,51 @@ class GeneratorPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class FavouritesPage extends StatelessWidget {
+  const FavouritesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    var appState = context.watch<MyAppState>();
+    if(appState.favourites.isEmpty) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text('No favourites yet'),
+          Text('Go to home and select your favourite word pairs!'),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for(var data in appState.favourites)
+          ListTile(
+            leading: IconButton(
+              icon: Icon(Icons.delete_outline, semanticLabel: 'Delete'),
+              color: theme.colorScheme.primary,
+              onPressed: () {
+                print('Delete $data');
+              },
+            ),
+            title: Text(
+              data.asLowerCase, semanticsLabel: data.asPascalCase,
+            ),
+          ),
+        ElevatedButton(
+          onPressed:() {
+            Text('Hello');
+          },
+          child: Text('Tezt'),
+        )
+      ],
     );
   }
 }
