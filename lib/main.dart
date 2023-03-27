@@ -52,6 +52,11 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void deleteFavourites(pair) {
+    favourites.remove(pair);
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -194,18 +199,13 @@ class FavouritesPage extends StatelessWidget {
               color: theme.colorScheme.primary,
               onPressed: () {
                 print('Delete $data');
+                appState.deleteFavourites(data);
               },
             ),
             title: Text(
               data.asLowerCase, semanticsLabel: data.asPascalCase,
             ),
           ),
-        ElevatedButton(
-          onPressed:() {
-            Text('Hello');
-          },
-          child: Text('Tezt'),
-        )
       ],
     );
   }
